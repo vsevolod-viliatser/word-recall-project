@@ -3,7 +3,7 @@ import React from 'react';
 const ExportLearnedWords = ({ token }) => {
   const handleExportClick = async () => {
     try {
-      const response = await fetch('https://word-recall.herokuapp.com/api/words/export-learned-words', {
+      const response = await fetch('/api/words/export-learned-words', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
