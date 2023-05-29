@@ -94,7 +94,7 @@ router.post("/submit-translation/:wordId", authenticateUser, async (req, res) =>
     }
 
     const isTranslationCorrect =
-      translation.toLowerCase() === word.ukrainian.toLowerCase();
+      translation.toLowerCase().trim() === word.ukrainian.toLowerCase().trim();
     wordObj.isLearned = isTranslationCorrect;
     wordObj.repetitionDate = new Date();
 
