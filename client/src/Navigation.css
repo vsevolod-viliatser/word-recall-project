@@ -1,0 +1,13 @@
+.custom-menu {
+    .bm-menu-wrap {
+      background-color: #ddd; /* Change the background color to grey */
+    }
+  
+    .bm-item-list {
+      font-size: 16px; /* Change the text size to 16px */
+    }
+  
+    .bm-item {
+      /* Customize individual menu items if needed */
+    }
+  }
