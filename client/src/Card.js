@@ -1,78 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import Card from "./Card";
 
-const Card = ({ word, onClose }) => {
+const Display = ({ token, learnedWords }) => {
+  const [selectedWord, setSelectedWord] = useState(null);
+  const [showWords, setShowWords] = useState(true);
+
+  const fetchWordInfo = async (word) => {
+    try {
+      const response = await fetch(
+        `https://api.dictionaryapi.dev/api/v2/entries/en/${word}`
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedWord(data[0]); // Assuming the API response is an array with a single object
+        setShowWords(false); // Hide the word buttons
+      } else {
+        console.error("Failed to fetch word info");
+      }
+    } catch (error) {
+      console.error(error);
+      console.error("Network error occurred. Please try again.");
+    }
+  };
+
+  const closeWordInfo = () => {
+    setSelectedWord(null);
+    setShowWords(true); // Show the word buttons again
+  };
+
+  const handleButtonClick = (word) => {
+    if (selectedWord && selectedWord.word === word.english) {
+      // If the card is already open for the clicked word, close it
+      closeWordInfo();
+    } else {
+      // Otherwise, fetch word info for the clicked word
+      fetchWordInfo(word.english);
+    }
+  };
+
   return (
-    <div className="word-card-overlay d-flex align-items-center justify-content-center">
-      <div className="card word-card w-50 position-relative">
-        <div className="close-button-container position-absolute top-0 end-0">
-          <button className="close-button btn p-3" onClick={onClose}>
-            <span className="fs-3">&times;</span>
-          </button>
-        </div>
-        <div className="card-body">
-          <h5 className="card-title">{word.word}</h5>
-          {word.translation && (
-            <p className="card-text">
-              <strong>Translation:</strong> {word.translation}
-            </p>
-          )}
-          {word.phonetics && word.phonetics.length > 0 && (
-            <div>
-              <p>
-                <strong>Phonetics:</strong>
-              </p>
-              <div className="row">
-                <div className="col">
-                  <p>{word.phonetics[0].text}</p>
-                </div>
-                <div className="col">
-                  {word.phonetics[0].audio && (
-                    <audio className="img-fluid" src={word.phonetics[0].audio} controls />
-                  )}
-                </div>
-              </div>
+    <div className="container">
+
+      <h2>Repeated Words</h2>
+      <div className="row justify-content-center">
+        {showWords &&
+          learnedWords &&
+          learnedWords.length > 0 &&
+          learnedWords.map((word) => (
+            <div key={word._id} className="col-md-6">
+              <button
+                className="btn btn-primary m-2 btn-lg rounded-0"
+                onClick={() => handleButtonClick(word)}
+              >
+                {word.english} - {word.ukrainian}
+              </button>
             </div>
-          )}
-          {word.meanings && word.meanings.length > 0 && (
-            <div>
-              <p>
-                <strong>Meanings:</strong>
-              </p>
-              {word.meanings.map((meaning, index) => (
-                <div key={index}>
-                  <p>
-                    <strong>{meaning.partOfSpeech}:</strong>{" "}
-                    {meaning.definitions && meaning.definitions.length > 0 ? (
-                      meaning.definitions[0].definition
-                    ) : (
-                      <em>No definition found.</em>
-                    )}
-                  </p>
-                  {meaning.definitions &&
-                    meaning.definitions.length > 0 &&
-                    meaning.definitions[0].example && (
-                      <p>
-                        <strong>Example:</strong>{" "}
-                        {meaning.definitions[0].example}
-                      </p>
-                    )}
-                  {meaning.definitions &&
-                    meaning.definitions.length > 0 &&
-                    meaning.definitions[0].synonyms &&
-                    meaning.definitions[0].synonyms.length > 0 && (
-                      <p>
-                        <strong>Synonyms:</strong>{" "}
-                        {meaning.definitions[0].synonyms.join(", ")}
-                      </p>
-                    )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+          ))}
+        {selectedWord && (
+          <Card word={selectedWord} onClose={closeWordInfo} />
+        )}
       </div>
     </div>
   );
 };
 
-export default Card;
+export default Display;

@@ -156,16 +156,6 @@ const WordRepetition = ({ token, onWordsRepeated }) => {
             )}
           </div>
           <ProgressBar now={progress} label={`${progress.toFixed(0)}%`} />
-          {repeatedWords.length > 0 && (
-            <div>
-              <h5>Repeated Words:</h5>
-              <ul>
-                {repeatedWords.map((word) => (
-                  <li key={word._id}>{word.english}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </form>
       ) : (
         <p className="fs-5">No words available for repetition</p>
