@@ -81,7 +81,7 @@ const WordRepetition = ({ token, onWordsRepeated }) => {
             console.log("Correct translation!");
             setSelectedOption("");
             setRepetitionCount((prevCount) => prevCount + 1);
-            setProgress((prevProgress) => prevProgress + (1 / 10) * 100); // Increase progress by 1/15
+            setProgress((prevProgress) => prevProgress + (1 / 4) * 100); // Increase progress by 1/15
             setErrorMessage(""); // Clear the error message
             setIncorrectCount(0); // Reset the incorrect count
 
@@ -103,7 +103,7 @@ const WordRepetition = ({ token, onWordsRepeated }) => {
   };
 
   useEffect(() => {
-    if (repetitionCount >= 10) {
+    if (repetitionCount >= 4) {
       setSessionCompleted(true);
       // Pass the repeatedWords array to the parent component
       onWordsRepeated(repeatedWords);
@@ -119,7 +119,7 @@ const WordRepetition = ({ token, onWordsRepeated }) => {
   }, [incorrectCount]);
 
   useEffect(() => {
-    const newProgress = (repetitionCount / 10) * 100;
+    const newProgress = (repetitionCount / 4) * 100;
     setProgress(newProgress);
   }, [repetitionCount]);
 

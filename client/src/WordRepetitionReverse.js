@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProgressBar from "react-bootstrap/ProgressBar";
 import { Link } from "react-router-dom";
-
 const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
   const [word, setWord] = useState(null);
   const [options, setOptions] = useState([]);
@@ -81,7 +80,7 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
             console.log("Correct translation!");
             setSelectedOption("");
             setRepetitionCount((prevCount) => prevCount + 1);
-            setProgress((prevProgress) => prevProgress + (1 / 10) * 100); // Increase progress by 1/15
+            setProgress((prevProgress) => prevProgress + (1 / 4) * 100); // Increase progress by 1/15
             setErrorMessage(""); // Clear the error message
             setIncorrectCount(0); // Reset the incorrect count
 
@@ -103,14 +102,13 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
   };
 
   useEffect(() => {
-    if (repetitionCount >= 10) {
+    if (repetitionCount >= 4) {
       setSessionCompleted(true);
       onWordsRepeated(repeatedWords);
     } else {
       fetchNextRepetitionWordReversed();
     }
   }, [repetitionCount]);
-
   useEffect(() => {
     if (incorrectCount === 2) {
       fetchNextRepetitionWordReversed();
@@ -118,10 +116,9 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
   }, [incorrectCount]);
 
   useEffect(() => {
-    const newProgress = (repetitionCount / 10) * 100;
+    const newProgress = (repetitionCount / 4) * 100;
     setProgress(newProgress);
   }, [repetitionCount]);
-
   return (
     <div className="container d-flex justify-content-center align-items-center">
       {hasWordsAvailable ? (
@@ -157,16 +154,6 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
             )}
           </div>
           <ProgressBar now={progress} label={`${progress.toFixed(0)}%`} />
-          {repeatedWords.length > 0 && (
-            <div>
-              <h5>Repeated Words:</h5>
-              <ul>
-                {repeatedWords.map((word) => (
-                  <li key={word._id}>{word.ukrainian}</li>
-                ))}
-              </ul>
-            </div>
-          )}
         </form>
       ) : (
         <p className="fs-5">No words available for repetition</p>
