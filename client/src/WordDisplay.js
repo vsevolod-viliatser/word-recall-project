@@ -39,7 +39,7 @@ const WordDisplay = ({ token }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log('Word ID:', word._id); // Check the value of word._id
-
+  
     try {
       const response = await fetch(`/api/words/submit-translation/${word._id}`, {
         method: 'POST',
@@ -49,12 +49,15 @@ const WordDisplay = ({ token }) => {
         },
         body: JSON.stringify({ translation }),
       });
-
+  
       if (response.ok) {
         const data = await response.json();
         const isTranslationCorrect = data.isCorrect;
         console.log('Is Translation Correct:', isTranslationCorrect);
         setIsCorrectTranslation(isTranslationCorrect);
+        setTimeout(() => {
+          setIsCorrectTranslation(null);
+        }, 1000); // Clear the message after 1 second
       } else {
         // Handle error message
         const errorData = await response.json();
@@ -67,9 +70,10 @@ const WordDisplay = ({ token }) => {
       console.error('Network error occurred. Please try again.');
       setIsCorrectTranslation(null);
     }
-
+  
     fetchRandomWord();
   };
+  
 
   useEffect(() => {
     fetchRandomWord();
