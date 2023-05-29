@@ -42,7 +42,6 @@ const Display = ({ token, learnedWords }) => {
 
   return (
     <div className="container">
-
       <h2>Repeated Words</h2>
       <div className="row justify-content-center">
         {showWords &&
@@ -62,6 +61,12 @@ const Display = ({ token, learnedWords }) => {
           <Card word={selectedWord} onClose={closeWordInfo} />
         )}
       </div>
+      {learnedWords && learnedWords.length === 0 && (
+        <p>No learned words available</p>
+      )}
+      <Link to="/word-repetition">
+        <button className="btn btn-primary m-2">Start Repetition</button>
+      </Link>
     </div>
   );
 };
