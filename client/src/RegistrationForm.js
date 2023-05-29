@@ -58,7 +58,7 @@ const RegistrationForm = () => {
       {error && <p>{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
-          <label htmlFor="username">Email:</label>
+          <label htmlFor="username">USER:</label>
           <input
             type="text"
             className="form-control"
