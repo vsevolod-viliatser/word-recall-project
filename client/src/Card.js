@@ -23,8 +23,9 @@ const Card = ({ word, onClose }) => {
               </p>
               <div>
                 <p>{word.phonetics[0].text}</p>
+
                 {word.phonetics[0].audio && (
-                  <audio src={word.phonetics[0].audio} controls />
+                  <audio className="object-fit-fill border rounded" src={word.phonetics[0].audio} controls />
                 )}
               </div>
             </div>
