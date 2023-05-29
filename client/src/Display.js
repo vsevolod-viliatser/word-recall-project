@@ -64,9 +64,7 @@ const Display = ({ token, learnedWords }) => {
       {learnedWords && learnedWords.length === 0 && (
         <p>No learned words available</p>
       )}
-      <Link to="/word-repetition">
-        <button className="btn btn-primary m-2">Start Repetition</button>
-      </Link>
+
     </div>
   );
 };
