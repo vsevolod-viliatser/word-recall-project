@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './Navigation';
 import WordDisplay from './WordDisplay';
 import WordRepetition from './WordRepetition';
@@ -43,46 +43,49 @@ const App = () => {
     setSelectedWord(null);
   };
 
+  // Redirect to login if not logged in
+  if (!token) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<LoginForm setToken={setToken} />} />
+          <Route path="/register" element={<RegistrationForm />} />
+        </Routes>
+      </BrowserRouter>
+    );
+  }
+
   return (
     <BrowserRouter>
       <Navigation token={token} onLogout={handleLogout} />
       <div className={`container ${showCard ? 'card-open' : ''}`}>
         <Routes>
-          {token ? (
-            <>
-              <Route path="/" element={<LandingPage token={token} />} />
-              <Route
-                path="/learning"
-                element={<WordDisplay token={token} onWordClick={handleWordClick} />}
+          <Route path="/" element={<LandingPage token={token} />} />
+          <Route
+            path="/learning"
+            element={<WordDisplay token={token} onWordClick={handleWordClick} />}
+          />
+          <Route
+            path="/repetition"
+            element={
+              <WordRepetition
+                token={token}
+                onWordsRepeated={handleWordsRepeated}
               />
-              <Route
-                path="/repetition"
-                element={
-                  <WordRepetition
-                    token={token}
-                    onWordsRepeated={handleWordsRepeated}
-                  />
-                }
-              />
-              <Route
-                path="/displays"
-                element={<Display token={token} learnedWords={repeatedWords} />}
-              />
-              <Route
-                path="/repetition-reverse"
-                element={<WordRepetitionReverse token={token} onWordsRepeated={handleWordsRepeated}/>}
-              />
-              <Route
-                path="/csv"
-                element={<ExportLearnedWords token={token} />}
-              />
-            </>
-          ) : (
-            <>
-              <Route path="/" element={<LoginForm setToken={setToken} />} />
-              <Route path="/register" element={<RegistrationForm />} />
-            </>
-          )}
+            }
+          />
+          <Route
+            path="/displays"
+            element={<Display token={token} learnedWords={repeatedWords} />}
+          />
+          <Route
+            path="/repetition-reverse"
+            element={<WordRepetitionReverse token={token} onWordsRepeated={handleWordsRepeated}/>}
+          />
+          <Route
+            path="/csv"
+            element={<ExportLearnedWords token={token} />}
+          />
         </Routes>
         {showCard && (
           <Card word={selectedWord} onClose={handleCloseCard} />
