@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navigation from './Navigation';
 import WordDisplay from './WordDisplay';
 import WordRepetition from './WordRepetition';
@@ -45,21 +45,9 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      {token && <Navigation token={token} onLogout={handleLogout} />}
+      <Navigation token={token} onLogout={handleLogout} />
       <div className={`container ${showCard ? 'card-open' : ''}`}>
         <Routes>
-          {!token && (
-            <Route
-              path="/"
-              element={<LoginForm setToken={setToken} />}
-            />
-          )}
-          {!token && (
-            <Route
-              path="/register"
-              element={<RegistrationForm />}
-            />
-          )}
           {token ? (
             <>
               <Route path="/" element={<LandingPage token={token} />} />
@@ -82,7 +70,7 @@ const App = () => {
               />
               <Route
                 path="/repetition-reverse"
-                element={<WordRepetitionReverse token={token} onWordsRepeated={handleWordsRepeated} />}
+                element={<WordRepetitionReverse token={token} onWordsRepeated={handleWordsRepeated}/>}
               />
               <Route
                 path="/csv"
@@ -90,7 +78,10 @@ const App = () => {
               />
             </>
           ) : (
-            <Navigate to="/" replace />
+            <>
+              <Route path="/" element={<LoginForm setToken={setToken} />} />
+              <Route path="/register" element={<RegistrationForm />} />
+            </>
           )}
         </Routes>
         {showCard && (
