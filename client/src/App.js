@@ -12,7 +12,7 @@ import Display from './Display';
 import Card from './Card';
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem('token'));
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [repeatedWords, setRepeatedWords] = useState([]);
   const [showCard, setShowCard] = useState(false);
   const [selectedWord, setSelectedWord] = useState(null);
@@ -26,7 +26,8 @@ const App = () => {
   }, [repeatedWords]);
 
   const handleLogout = () => {
-    setToken(null);
+    setToken('');
+    localStorage.removeItem('token');
   };
 
   const handleWordsRepeated = (words) => {
@@ -79,10 +80,17 @@ const App = () => {
             </>
           ) : (
             <>
-              <Route path="/login" element={<LoginForm setToken={setToken} />} />
+              <Route
+                path="/"
+                element={<LoginForm setToken={setToken} />}
+              />
               <Route path="/register" element={<RegistrationForm />} />
             </>
           )}
+          <Route
+            path="/*"
+            element={<LoginForm setToken={setToken} />}
+          />
         </Routes>
         {showCard && (
           <Card word={selectedWord} onClose={handleCloseCard} />
@@ -91,5 +99,6 @@ const App = () => {
     </BrowserRouter>
   );
 };
+
 
 export default App;
