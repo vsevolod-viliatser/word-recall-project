@@ -106,7 +106,7 @@ const WordDisplay = ({ token }) => {
                       {meaning.definitions && meaning.definitions.length > 0 ? (
                         <ul>
                           <li>
-                            {meaning.definitions[0].definition}
+                            <div className="word-definition">{meaning.definitions[0].definition}</div>
                             {meaning.definitions[0].example && (
                               <span> Example: {meaning.definitions[0].example}</span>
                             )}
@@ -151,7 +151,6 @@ const WordDisplay = ({ token }) => {
       )}
     </div>
   );
-  
 };
 
 export default WordDisplay;
