@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Navigation from './Navigation';
 import WordDisplay from './WordDisplay';
 import WordRepetition from './WordRepetition';
@@ -10,7 +10,6 @@ import ExportLearnedWords from './ExportLearnedWords';
 import WordRepetitionReverse from './WordRepetitionReverse';
 import Display from './Display';
 import Card from './Card';
-import PrivateRoute from './PrivateRoute';
 
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -45,41 +44,60 @@ const App = () => {
   };
 
   return (
-    <Router>
+    <BrowserRouter>
       {token && <Navigation token={token} onLogout={handleLogout} />}
       <div className={`container ${showCard ? 'card-open' : ''}`}>
         <Routes>
-          <Route path="/" element={!token ? <LoginForm setToken={setToken} /> : <LandingPage token={token} />} />
-          <Route path="/register" element={<RegistrationForm />} />
-          <PrivateRoute
-            path="/learning"
-            element={<WordDisplay token={token} onWordClick={handleWordClick} />}
-            isAuthenticated={!!token}
-          />
-          <PrivateRoute
-            path="/repetition"
-            element={<WordRepetition token={token} onWordsRepeated={handleWordsRepeated} />}
-            isAuthenticated={!!token}
-          />
-          <PrivateRoute
-            path="/displays"
-            element={<Display token={token} learnedWords={repeatedWords} />}
-            isAuthenticated={!!token}
-          />
-          <PrivateRoute
-            path="/repetition-reverse"
-            element={<WordRepetitionReverse token={token} onWordsRepeated={handleWordsRepeated} />}
-            isAuthenticated={!!token}
-          />
-          <PrivateRoute
-            path="/csv"
-            element={<ExportLearnedWords token={token} />}
-            isAuthenticated={!!token}
-          />
+          {!token && (
+            <Route
+              path="/"
+              element={<LoginForm setToken={setToken} />}
+            />
+          )}
+          {!token && (
+            <Route
+              path="/register"
+              element={<RegistrationForm />}
+            />
+          )}
+          {token ? (
+            <>
+              <Route path="/" element={<LandingPage token={token} />} />
+              <Route
+                path="/learning"
+                element={<WordDisplay token={token} onWordClick={handleWordClick} />}
+              />
+              <Route
+                path="/repetition"
+                element={
+                  <WordRepetition
+                    token={token}
+                    onWordsRepeated={handleWordsRepeated}
+                  />
+                }
+              />
+              <Route
+                path="/displays"
+                element={<Display token={token} learnedWords={repeatedWords} />}
+              />
+              <Route
+                path="/repetition-reverse"
+                element={<WordRepetitionReverse token={token} onWordsRepeated={handleWordsRepeated} />}
+              />
+              <Route
+                path="/csv"
+                element={<ExportLearnedWords token={token} />}
+              />
+            </>
+          ) : (
+            <Navigate to="/" replace />
+          )}
         </Routes>
-        {showCard && <Card word={selectedWord} onClose={handleCloseCard} />}
+        {showCard && (
+          <Card word={selectedWord} onClose={handleCloseCard} />
+        )}
       </div>
-    </Router>
+    </BrowserRouter>
   );
 };
 
