@@ -83,9 +83,9 @@ const WordDisplay = ({ token }) => {
     <div className="container d-flex justify-content-center align-items-center min-vh-100">
       {hasWordsAvailable ? (
         word && (
-          <>
-            <div className="mb-4">
-              <h3>Enter Ukrainian Translation</h3>
+          <div className="mb-4">
+            <h3 className="text-center">Enter Ukrainian Translation</h3>
+            <div className="text-center">
               <label htmlFor="englishWord" className="fs-2">{word.word}</label>
               {word.phonetics && word.phonetics.length > 0 && (
                 <div>
@@ -126,7 +126,7 @@ const WordDisplay = ({ token }) => {
                   ))}
                 </div>
               )}
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={handleSubmit} className="text-center">
                 <input
                   type="text"
                   id="translation"
@@ -144,13 +144,14 @@ const WordDisplay = ({ token }) => {
                 </div>
               </div>
             )}
-          </>
+          </div>
         )
       ) : (
-        <p>No unlearned words available.</p>
+        <p className="text-center">No unlearned words available.</p>
       )}
     </div>
   );
+  
 };
 
 export default WordDisplay;
