@@ -17,7 +17,7 @@ const WordRepetition = ({ token, onWordsRepeated }) => {
   const fetchNextRepetitionWord = async () => {
     try {
       const response = await fetch(
-        "/api/words/get-repetition-word",
+        "api/words/get-repetition-word",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -62,7 +62,7 @@ const WordRepetition = ({ token, onWordsRepeated }) => {
     try {
       if (word) {
         const response = await fetch(
-          `/api/words/submit-repetition/${word._id}`,
+          `api/words/submit-repetition/${word._id}`,
           {
             method: "POST",
             headers: {

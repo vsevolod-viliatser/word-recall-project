@@ -53,7 +53,7 @@ const Display = ({ token, learnedWords }) => {
                 className="btn btn-primary m-2 btn-lg rounded-0"
                 onClick={() => handleButtonClick(word)}
               >
-                {word.english} - {word.ukrainian}
+                {word.english} - {word.ukrainian[0]}
               </button>
             </div>
           ))}

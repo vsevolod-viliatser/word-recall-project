@@ -3,7 +3,7 @@ import React from 'react';
 const ExportLearnedWords = ({ token }) => {
   const handleExportClick = async () => {
     try {
-      const response = await fetch('/api/words/export-learned-words', {
+      const response = await fetch('http://localhost:5000/api/words/export-learned-words', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

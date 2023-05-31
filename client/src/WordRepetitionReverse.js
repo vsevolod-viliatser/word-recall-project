@@ -16,14 +16,14 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
   const fetchNextRepetitionWordReversed = async () => {
     try {
       const response = await fetch(
-        "/api/words/get-repetition-word-reversed",
+        "api/words/get-repetition-word-reversed",
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
       );
-
+  
       if (response.ok) {
         const data = await response.json();
         if (
@@ -32,7 +32,8 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
         ) {
           setHasWordsAvailable(false);
         } else {
-          setWord(data.word);
+          const word = data.word;
+          const oneWord=word.ukrainian[0]
           if (Array.isArray(data.options)) {
             setOptions([...data.options]);
           } else {
@@ -42,6 +43,7 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
           setSelectedOption("");
           setErrorMessage("");
           setHasWordsAvailable(true);
+          setWord(word);
         }
       } else {
         const errorData = await response.json();
@@ -54,6 +56,8 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
       setHasWordsAvailable(false);
     }
   };
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,7 +65,7 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
     try {
       if (word) {
         const response = await fetch(
-          `/api/words/submit-repetition-reversed/${word._id}`,
+          `api/words/submit-repetition-reversed/${word._id}`,
           {
             method: "POST",
             headers: {
@@ -125,7 +129,10 @@ const WordRepetitionReverse = ({ token, onWordsRepeated }) => {
         <form onSubmit={handleSubmit} className="text-center">
           <h2 className="mb-4">Repetition</h2>
           <p className="fs-5">Translate the word:</p>
-          {word && <h3 className="display-4 mb-4">{word.ukrainian}</h3>}
+          {word && <h3 className="display-4 mb-4">{word.ukrainian[0]}</h3>}
+
+
+
           {errorMessage && <p className="fs-5 text-danger">{errorMessage}</p>}
           <div>
             {sessionCompleted ? (

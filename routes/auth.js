@@ -33,8 +33,9 @@ router.post('/register', async (req, res) => {
       repetitionDate: null,
       isLearned: false,
       retentionStrength: 1,
-      consecutiveFailedAttempts:0,
-      interval:0
+      consecutiveFailedAttempts: 0,
+      interval: 0,
+      translations: word.ukrainian, // Update to translations field
     }));
 
     newUser.learnedWords = learnedWords;
@@ -46,6 +47,8 @@ router.post('/register', async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 router.post('/login', async (req, res, next) => {
   try {
     const { username, password } = req.body;

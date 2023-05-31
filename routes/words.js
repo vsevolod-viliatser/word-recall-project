@@ -51,7 +51,7 @@ router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
       const updatedWordData = {
         ...wordData,
         _id: word._id,
-        ukrainian: word.ukrainian,
+        ukrainian: word.ukrainian, // Update to ukrainian field
         phonetics,
         meanings,
       };
@@ -65,7 +65,6 @@ router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
-
 
 
 router.post("/submit-translation/:wordId", authenticateUser, async (req, res) => {
@@ -93,8 +92,10 @@ router.post("/submit-translation/:wordId", authenticateUser, async (req, res) =>
         .json({ message: "Word not found in user's learned words" });
     }
 
-    const isTranslationCorrect =
-      translation.toLowerCase().trim() === word.ukrainian.toLowerCase().trim();
+    const isTranslationCorrect = word.ukrainian.some(
+      (translationWord) =>
+        translationWord.toLowerCase().trim() === translation.toLowerCase().trim()
+    );
     wordObj.isLearned = isTranslationCorrect;
     wordObj.repetitionDate = new Date();
 
@@ -172,7 +173,7 @@ router.post(
 
       const wordObj = user.learnedWords[wordObjIndex];
       const isCorrect =
-        translation.toLowerCase() === word.ukrainian.toLowerCase();
+        translation.toLowerCase() === word.ukrainian[0].toLowerCase();
 
       if (isCorrect) {
         const retentionStrength = wordObj.retentionStrength;
@@ -211,8 +212,7 @@ router.post(
   }
 );
 
-router.get(
-  "/get-repetition-word-reversed",
+router.get("/get-repetition-word-reversed",
   authenticateUser,
   async (req, res) => {
     try {
@@ -230,7 +230,8 @@ router.get(
           .status(404)
           .json({ message: "No words available for repetition" });
       }
-
+console.log(nextRepetitionWord)
+console.log(nextRepetitionWord.word)
       const word = nextRepetitionWord.word;
       const options = await generateTranslationOptionsReversed(word);
       res.json({ word, options });
@@ -240,8 +241,7 @@ router.get(
     }
   }
 );
-router.post(
-  "/submit-repetition-reversed/:wordId",
+router.post("/submit-repetition-reversed/:wordId",
   authenticateUser,
   async (req, res) => {
     try {
@@ -368,7 +368,7 @@ const calculateInterval = (initialInterval, retentionStrength) => {
 
 const generateTranslationOptions = async (word) => {
   const options = [];
-  options.push(word.ukrainian); // Add the correct translation option
+  options.push(word.ukrainian[0]); // Add the correct translation option
 
   const incorrectTranslations = await getIncorrectTranslations(word);
   options.push(...incorrectTranslations);
@@ -392,16 +392,14 @@ const getIncorrectTranslations = async (word) => {
     const randomTranslations = await Word.aggregate([
       { $match: { _id: { $ne: word._id } } },
       { $sample: { size: 4 } },
-      { $project: { _id: 0, ukrainian: 1 } },
+      { $project: { _id: 0, ukrainian: { $slice: ["$ukrainian", 1] } } },
     ]);
 
     if (!randomTranslations || randomTranslations.length !== 4) {
       throw new Error("Failed to fetch random translations");
     }
 
-    const incorrectTranslations = randomTranslations.map(
-      (word) => word.ukrainian
-    );
+    const incorrectTranslations = randomTranslations.map((word) => word.ukrainian[0]);
 
     return incorrectTranslations;
   } catch (error) {
@@ -409,6 +407,7 @@ const getIncorrectTranslations = async (word) => {
     return ["Машина", "Воля", "Клавіатура", "Всесвіт"];
   }
 };
+
 const getIncorrectTranslationsReversed = async (word) => {
   try {
     const randomTranslations = await Word.aggregate([
@@ -438,6 +437,29 @@ const shuffleArray = (array) => {
     [array[i], array[j]] = [array[j], array[i]];
   }
 };
+router.post('/addMore', async (req, res) => {
+  try {
+    const words = req.body;
+
+    // Create an array to store the newly created word documents
+    const createdWords = [];
+
+    // Iterate through the words array and create a new word document for each word
+    for (const { english, ukrainian } of words) {
+      const word = await Word.create({ english, ukrainian });
+      createdWords.push(word);
+    }
+
+    // Add the newly created words to the "learnedWords" array of all users with "isLearned" set to false
+    await User.updateMany({}, { $push: { learnedWords: { $each: createdWords.map(word => ({ word: word._id })) } } });
+
+    res.status(200).json({ message: 'Words added successfully.' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error.' });
+  }
+});
+
 
 module.exports = router;
 

@@ -8,7 +8,7 @@ const WordDisplay = ({ token }) => {
 
   const fetchRandomWord = async () => {
     try {
-      const response = await fetch('/api/words/random-unlearned-word', {
+      const response = await fetch('api/words/random-unlearned-word', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -41,7 +41,7 @@ const WordDisplay = ({ token }) => {
     console.log('Word ID:', word._id); // Check the value of word._id
   
     try {
-      const response = await fetch(`/api/words/submit-translation/${word._id}`, {
+      const response = await fetch(`api/words/submit-translation/${word._id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
