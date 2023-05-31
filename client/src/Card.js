@@ -25,8 +25,16 @@ const Card = ({ word, onClose }) => {
                 <p>{word.phonetics[0].text}</p>
 
                 {word.phonetics[0].audio && (
-                  <audio className="object-fit-fill border rounded" src={word.phonetics[0].audio} controls />
-                )}
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => {
+                          const audio = new Audio(word.phonetics[0].audio);
+                          audio.play();
+                        }}
+                      >
+                        Play Audio
+                      </button>
+                    )}
               </div>
             </div>
           )}
