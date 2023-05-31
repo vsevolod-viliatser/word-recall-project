@@ -12,25 +12,26 @@ const csvHeader = [
   { id: "ukrainian", title: "Ukrainian" },
 ];
 
-router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
+router.get("/random-unlearned-word", authenticateUser, async (req, res) => {
   try {
     const userId = req.user._id;
 
-    const user = await User.findById(userId).populate('learnedWords.word');
+    const user = await User.findById(userId).populate("learnedWords.word");
 
-    const unlearnedWords = user.learnedWords.filter((wordObj) => !wordObj.isLearned);
+    const unlearnedWords = user.learnedWords.filter(
+      (wordObj) => !wordObj.isLearned
+    );
 
     if (unlearnedWords.length === 0) {
-      return res.status(404).json({ message: 'No unlearned words available' });
+      return res.status(404).json({ message: "No unlearned words available" });
     }
 
     const randomIndex = Math.floor(Math.random() * unlearnedWords.length);
     const word = unlearnedWords[randomIndex].word;
-    unlearnedWords[randomIndex].word.ukrainian.map((el,index)=>{
-      console.log(el[++index])
-    })
 
-    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.english}`);
+    const response = await fetch(
+      `https://api.dictionaryapi.dev/api/v2/entries/en/${word.english}`
+    );
     const data = await response.json();
 
     if (Array.isArray(data) && data.length > 0) {
@@ -39,7 +40,7 @@ router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
         text: phonetic.text,
         audio: phonetic.audio,
       }));
-    
+
       const meanings = wordData.meanings
         //.filter((meaning) => meaning.partOfSpeech === 'noun')
         .map((meaning) => ({
@@ -50,7 +51,7 @@ router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
             synonyms: definition.synonyms,
           })),
         }));
-    
+
       const updatedWordData = {
         ...wordData,
         _id: word._id,
@@ -58,68 +59,72 @@ router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
         phonetics,
         meanings,
       };
-    
+
       res.json({ word: updatedWordData });
     } else {
-      res.status(404).json({ message: 'Word data not found' });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-
-router.post("/submit-translation/:wordId", authenticateUser, async (req, res) => {
-  try {
-    const { wordId } = req.params;
-    const { translation } = req.body;
-    const userId = req.user._id;
-
-    const word = await Word.findById(wordId);
-    if (!word) {
-      return res.status(404).json({ message: "Word not found" });
-    }
-
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const wordObj = user.learnedWords.find(
-      (wordObj) => wordObj.word.toString() === wordId
-    );
-    if (!wordObj) {
-      return res
-        .status(404)
-        .json({ message: "Word not found in user's learned words" });
-    }
-
-    const isTranslationCorrect = word.ukrainian.some(
-      (translationWord) =>
-        translationWord.toLowerCase().trim() === translation.toLowerCase().trim()
-    );
-    wordObj.isLearned = isTranslationCorrect;
-    wordObj.repetitionDate = new Date();
-
-    await user.save();
-
-    if (isTranslationCorrect) {
-      return res.json({
-        message: "Correct translation submitted",
-        isCorrect: true,
-      });
-    } else {
-      return res.json({
-        message: "Incorrect translation submitted",
-        isCorrect: false,
-      });
+      res.status(404).json({ message: "Word data not found" });
     }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal server error" });
   }
 });
+
+router.post(
+  "/submit-translation/:wordId",
+  authenticateUser,
+  async (req, res) => {
+    try {
+      const { wordId } = req.params;
+      const { translation } = req.body;
+      const userId = req.user._id;
+
+      const word = await Word.findById(wordId);
+      if (!word) {
+        return res.status(404).json({ message: "Word not found" });
+      }
+
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      const wordObj = user.learnedWords.find(
+        (wordObj) => wordObj.word.toString() === wordId
+      );
+      if (!wordObj) {
+        return res
+          .status(404)
+          .json({ message: "Word not found in user's learned words" });
+      }
+
+      const isTranslationCorrect = word.ukrainian.some(
+        (translationWord) =>
+          translationWord.toLowerCase().trim() ===
+          translation.toLowerCase().trim()
+      );
+      wordObj.isLearned = isTranslationCorrect;
+      wordObj.repetitionDate = new Date();
+
+      await user.save();
+
+      if (isTranslationCorrect) {
+        return res.json({
+          message: "Correct translation submitted",
+          isCorrect: true,
+        });
+      } else {
+        return res.json({
+          message: "Incorrect translation submitted",
+          isCorrect: false,
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+);
 
 router.get("/get-repetition-word", authenticateUser, async (req, res) => {
   try {
@@ -215,7 +220,8 @@ router.post(
   }
 );
 
-router.get("/get-repetition-word-reversed",
+router.get(
+  "/get-repetition-word-reversed",
   authenticateUser,
   async (req, res) => {
     try {
@@ -233,8 +239,8 @@ router.get("/get-repetition-word-reversed",
           .status(404)
           .json({ message: "No words available for repetition" });
       }
-console.log(nextRepetitionWord)
-console.log(nextRepetitionWord.word)
+      console.log(nextRepetitionWord);
+      console.log(nextRepetitionWord.word);
       const word = nextRepetitionWord.word;
       const options = await generateTranslationOptionsReversed(word);
       res.json({ word, options });
@@ -244,7 +250,8 @@ console.log(nextRepetitionWord.word)
     }
   }
 );
-router.post("/submit-repetition-reversed/:wordId",
+router.post(
+  "/submit-repetition-reversed/:wordId",
   authenticateUser,
   async (req, res) => {
     try {
@@ -402,7 +409,9 @@ const getIncorrectTranslations = async (word) => {
       throw new Error("Failed to fetch random translations");
     }
 
-    const incorrectTranslations = randomTranslations.map((word) => word.ukrainian[0]);
+    const incorrectTranslations = randomTranslations.map(
+      (word) => word.ukrainian[0]
+    );
 
     return incorrectTranslations;
   } catch (error) {
@@ -440,7 +449,7 @@ const shuffleArray = (array) => {
     [array[i], array[j]] = [array[j], array[i]];
   }
 };
-router.post('/addMore', async (req, res) => {
+router.post("/addMore", async (req, res) => {
   try {
     const words = req.body;
 
@@ -454,15 +463,23 @@ router.post('/addMore', async (req, res) => {
     }
 
     // Add the newly created words to the "learnedWords" array of all users with "isLearned" set to false
-    await User.updateMany({}, { $push: { learnedWords: { $each: createdWords.map(word => ({ word: word._id })) } } });
+    await User.updateMany(
+      {},
+      {
+        $push: {
+          learnedWords: {
+            $each: createdWords.map((word) => ({ word: word._id })),
+          },
+        },
+      }
+    );
 
-    res.status(200).json({ message: 'Words added successfully.' });
+    res.status(200).json({ message: "Words added successfully." });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Server error.' });
+    res.status(500).json({ error: "Server error." });
   }
 });
-
 
 module.exports = router;
 
