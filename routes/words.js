@@ -26,6 +26,9 @@ router.get('/random-unlearned-word', authenticateUser, async (req, res) => {
 
     const randomIndex = Math.floor(Math.random() * unlearnedWords.length);
     const word = unlearnedWords[randomIndex].word;
+    unlearnedWords[randomIndex].word.ukrainian.map((el,index)=>{
+      console.log(el[++index])
+    })
 
     const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word.english}`);
     const data = await response.json();
