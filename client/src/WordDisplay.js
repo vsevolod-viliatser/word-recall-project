@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from 'react';
 
 const WordDisplay = ({ token }) => {
   const [word, setWord] = useState(null);
-  const [translation, setTranslation] = useState("");
+  const [translation, setTranslation] = useState('');
   const [hasWordsAvailable, setHasWordsAvailable] = useState(true);
   const [isCorrectTranslation, setIsCorrectTranslation] = useState(null);
 
   const fetchRandomWord = async () => {
     try {
-      const response = await fetch("api/words/random-unlearned-word", {
+      const response = await fetch('api/words/random-unlearned-word', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -17,8 +17,8 @@ const WordDisplay = ({ token }) => {
       if (response.ok) {
         const data = await response.json();
         setWord(data.word);
-        console.log("Word:", data.word);
-        setTranslation("");
+        console.log('Word:', data.word);
+        setTranslation('');
         setHasWordsAvailable(true);
         setIsCorrectTranslation(null);
       } else {
@@ -31,20 +31,20 @@ const WordDisplay = ({ token }) => {
     } catch (error) {
       console.error(error);
       // Handle network error
-      console.error("Network error occurred. Please try again.");
+      console.error('Network error occurred. Please try again.');
       setIsCorrectTranslation(null);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Word ID:", word._id); // Check the value of word._id
+    console.log('Word ID:', word._id); // Check the value of word._id
 
     try {
       const response = await fetch(`api/words/submit-translation/${word._id}`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ translation }),
@@ -53,7 +53,7 @@ const WordDisplay = ({ token }) => {
       if (response.ok) {
         const data = await response.json();
         const isTranslationCorrect = data.isCorrect;
-        console.log("Is Translation Correct:", isTranslationCorrect);
+        console.log('Is Translation Correct:', isTranslationCorrect);
         setIsCorrectTranslation(isTranslationCorrect);
         setTimeout(() => {
           setIsCorrectTranslation(null);
@@ -67,7 +67,7 @@ const WordDisplay = ({ token }) => {
     } catch (error) {
       console.error(error);
       // Handle network error
-      console.error("Network error occurred. Please try again.");
+      console.error('Network error occurred. Please try again.');
       setIsCorrectTranslation(null);
     }
 
@@ -120,7 +120,7 @@ const WordDisplay = ({ token }) => {
                             </div>
                             {meaning.definitions[0].example && (
                               <span>
-                                {" "}
+                                {' '}
                                 Example: {meaning.definitions[0].example}
                               </span>
                             )}
@@ -128,12 +128,12 @@ const WordDisplay = ({ token }) => {
                           {meaning.definitions[0].synonyms &&
                           meaning.definitions[0].synonyms.length > 0 ? (
                             <li>
-                              Synonyms:{" "}
+                              Synonyms:{' '}
                               {meaning.definitions[0].synonyms
                                 .slice(0, 3)
-                                .join(", ")}
+                                .join(', ')}
                               {meaning.definitions[0].synonyms.length > 3 &&
-                                " ..."}
+                                ' ...'}
                             </li>
                           ) : null}
                         </ul>
@@ -145,33 +145,26 @@ const WordDisplay = ({ token }) => {
                 </div>
               )}
               <form onSubmit={handleSubmit} className="text-center">
-                <input
-                  type="text"
-                  id="translation"
-                  className="form-control mb-2"
-                  value={translation}
-                  onChange={(e) => setTranslation(e.target.value)}
-                />
+                <div className="mb-3">
+                  <input
+                    type="text"
+                    id="translation"
+                    className="form-control"
+                    placeholder="Enter translation"
+                    value={translation}
+                    onChange={(e) => setTranslation(e.target.value)}
+                  />
+                </div>
                 <button type="submit" className="btn btn-primary">
                   Submit
                 </button>
               </form>
+              {isCorrectTranslation !== null && (
+                <p className={`${isCorrectTranslation ? 'text-success' : 'text-danger'}`}>
+                  {isCorrectTranslation ? 'Correct!' : 'Incorrect!'}
+                </p>
+              )}
             </div>
-            {isCorrectTranslation !== null && (
-              <div
-                className={`position-fixed top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center bg-overlay ${
-                  isCorrectTranslation ? "bg-success" : "bg-danger"
-                }`}
-              >
-                <div
-                  className={`text-white display-4 ${
-                    isCorrectTranslation ? "success-message" : "error-message"
-                  }`}
-                >
-                  {isCorrectTranslation ? "Correct!" : "Incorrect!"}
-                </div>
-              </div>
-            )}
           </div>
         )
       ) : (
