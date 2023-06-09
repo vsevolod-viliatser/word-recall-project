@@ -55,9 +55,12 @@ const WordDisplay = ({ token }) => {
         const isTranslationCorrect = data.isCorrect;
         console.log('Is Translation Correct:', isTranslationCorrect);
         setIsCorrectTranslation(isTranslationCorrect);
+
+        // Delay resetting the message
         setTimeout(() => {
           setIsCorrectTranslation(null);
-        }, 1000); // Clear the message after 1 second
+          fetchRandomWord();
+        }, 2000); // Clear the message after 2 seconds and fetch new word
       } else {
         // Handle error message
         const errorData = await response.json();
@@ -70,8 +73,6 @@ const WordDisplay = ({ token }) => {
       console.error('Network error occurred. Please try again.');
       setIsCorrectTranslation(null);
     }
-
-    fetchRandomWord();
   };
 
   useEffect(() => {
@@ -168,23 +169,9 @@ const WordDisplay = ({ token }) => {
                 >
                   {isCorrectTranslation !== null ? (
                     isCorrectTranslation ? (
-                      <>
-                        <span className="me-2">Correct!</span>
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                      </>
+                      'Correct!'
                     ) : (
-                      <>
-                        <span className="me-2">Incorrect!</span>
-                        <span
-                          className="spinner-border spinner-border-sm"
-                          role="status"
-                          aria-hidden="true"
-                        ></span>
-                      </>
+                      'Incorrect!'
                     )
                   ) : (
                     'Submit'
