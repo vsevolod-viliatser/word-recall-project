@@ -155,15 +155,42 @@ const WordDisplay = ({ token }) => {
                     onChange={(e) => setTranslation(e.target.value)}
                   />
                 </div>
-                <button type="submit" className="btn btn-primary">
-                  Submit
+                <button
+                  type="submit"
+                  className={`btn btn-primary ${
+                    isCorrectTranslation !== null
+                      ? isCorrectTranslation
+                        ? 'bg-success'
+                        : 'bg-danger'
+                      : ''
+                  }`}
+                  disabled={isCorrectTranslation !== null}
+                >
+                  {isCorrectTranslation !== null ? (
+                    isCorrectTranslation ? (
+                      <>
+                        <span className="me-2">Correct!</span>
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="me-2">Incorrect!</span>
+                        <span
+                          className="spinner-border spinner-border-sm"
+                          role="status"
+                          aria-hidden="true"
+                        ></span>
+                      </>
+                    )
+                  ) : (
+                    'Submit'
+                  )}
                 </button>
               </form>
-              {isCorrectTranslation !== null && (
-                <p className={`${isCorrectTranslation ? 'text-success' : 'text-danger'}`}>
-                  {isCorrectTranslation ? 'Correct!' : 'Incorrect!'}
-                </p>
-              )}
             </div>
           </div>
         )
