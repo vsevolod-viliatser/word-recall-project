@@ -1,4 +1,3 @@
-Word Recall
 Word Recall is a web service for word learning and repeating learned words.
 
 Overview
