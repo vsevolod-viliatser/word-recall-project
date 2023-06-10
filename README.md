@@ -36,8 +36,8 @@ Register or log in using your credentials.
 Contributing
 If you have any suggestions for improving Word Recall, you can create a new branch, make your changes, and open a Pull Request. We will review your changes accordingly.
 
-Authors
+Author:
 Vsevolod Viliatser - sevavilyatser@gmail.com
 
-Links
+
 Link to the Word Recall web service on Heroku: https://fierce-badlands-41031.herokuapp.com/
